@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'C:/Users/Public/Documents/MVTec/HALCON-25.11-Progress-Student-Edition/examples/images/printer_chip/printer_chip_02.png')</l>
+<l>get_image_size(Image, With, Height)</l>
+<c></c>
+<l>dev_open_window(0,0, With/4, Height/4, 'black', Win1)</l>
+<l>dev_display(Image)</l>
+<l>threshold(Image, result_Region, 128, 255)</l>
+<c></c>
+<c>* connection tách các region không dính nhau thành 1 region to thành 1 list các region nhỏ</c>
+<l>connection(result_Region, ConnectedRegion)</l>
+<l>dev_clear_window()</l>
+<c>* area: diện tích của region</c>
+<c>* row, column, rect2_phi, rect2_len1, rect2_len2: tâm hcn, phi là hướng hcn, chiều dài và chiều rộng hcn </c>
+<c>* row1, column1, row2, column2: tọa độ đính góc trên bên trái và tọa độ đỉnh góc dưới bên </c>
+<c>* width, height: chiều dài và chiều rộng </c>
+<c>* outer_radius: bán kính hình chữ tròn nhỏ nhất bao quanh region</c>
+<c>* roundness: độ tròn 0–1, tính đặc</c>
+<c>* circularity: độ tròn 0–1, độ biến dạng</c>
+<c></c>
+<l>dev_display(Image)</l>
+<l>select_obj(ConnectedRegion, Object, 6)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<l>dev_display(Image)</l>
+<c>* lấy ra 1 đặc trưng của </c>
+<l>region_features (Object, 'area', A)</l>
+<l>* region_features (Object, ['area', 'row', 'column'], A)</l>
+<c>* lấy ra diện tích, tâm </c>
+<l>area_center(Object, Area, Row, Column)</l>
+<c>* lấy ra thông số của hcn có nao quanh region</c>
+<l>smallest_rectangle2(Object, row, column, rect2_phi, rect2_len1, rect2_len2)</l>
+<c>* lấy ra thông số của hcn không có hướng</c>
+<l>smallest_rectangle1(Object, Row1, Column1 ,Row2, Column2)</l>
+<c>* lọc region</c>
+<l>select_shape(ConnectedRegion, RegionSelect, ['width', 'height', 'area'], 'and', [115,245,300], [135,265,99999])</l>
+<l>dev_display(RegionSelect)</l>
+<c>* đếm số phần tử trong list region</c>
+<l>count_obj(RegionSelect, Num)</l>
+<c></c>
+<l>select_obj(ConnectedRegion, result_Object, 42)</l>
+<c>* lấp đầy 1 region bị rỗng ở giữa</c>
+<l>fill_up(result_Object, RegionFill)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<l>dev_display(Image)</l>
+<c>* lấy ra đường bao của region</c>
+<l>boundary(result_Object, RegionBoundary, 'inner')</l>
+<c>* sắp xếp các region</c>
+<l>sort_region(RegionSelect, RegionSort, 'upper_left', 'true', 'row')</l>
+<c>* chia region thành nhiều ô hcn nhỏ</c>
+<l>partition_rectangle(Object, ObjectPartition, 20, 10)</l>
+<c>* tìm 1 region bao quanh 1 region</c>
+<l>shape_trans(Object, RegionTrans, 'rectangle1')</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>* Các hàm liên quan đến region và image</c>
+<l>gen_rectangle1 (ROI_0, 405.5, 264.943, 821.5, 641.702)</l>
+<c>* reduce_domain loại bỏ những phần k mong, tạo 1 vùng quan tâm </c>
+<l>reduce_domain(Image, ROI_0, ImageReduce)</l>
+<l>dev_display(ImageReduce)</l>
+<l>dev_clear_window()</l>
+<l>dev_display(Image)</l>
+<l>gen_rectangle1 (ROI_0, 405.5, 264.943, 821.5, 641.702)</l>
+<l>smallest_rectangle1(ROI_0, Row11, Column11, Row21, Column21)</l>
+<l>crop_rectangle1(Image, ImageCrop, Row11, Column11, Row21, Column21)</l>
+<l>dev_display(ImageCrop)</l>
+<l>dev_clear_window()</l>
+<l>dev_display(Image)</l>
+<l>gen_rectangle2 (ROI_0, 609.5, 1551.64, rad(-74.0977), 49.91, 48.944)</l>
+<l>smallest_rectangle2(ROI_0, Row3, Column3, Phi, Length1, Length2)</l>
+<l>crop_rectangle2(Image, ImageCrop2, Row3, Column3, Phi, Length1, Length2, 'true',  'constant')</l>
+<l>dev_display(ImageCrop2)</l>
+<l>dev_clear_window()</l>
+<l>dev_close_window ()</l>
+<c>* thay đổi giá trị xám của 1 vùng pĩxel</c>
+<l>gen_rectangle1 (ROI_0, 405.5, 264.943, 821.5, 641.702)</l>
+<l>paint_region(ROI_0,Image, ImageResult, 0, 'fill')</l>
+<l>dev_display(ImageResult)</l>
+<l>dev_clear_window()</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

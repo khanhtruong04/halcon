@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* threshold: ngưỡng dùng ảnh 1  </c>
+<c></c>
+<l>read_image (Image, 'C:/Users/Public/Documents/MVTec/HALCON-25.11-Progress-Student-Edition/examples/images/printer_chip/printer_chip_01.png')</l>
+<l>get_image_size(Image, With, Height)</l>
+<c></c>
+<l>dev_open_window(0,0, With/4, Height/4, 'black', Win1)</l>
+<l>dev_display(Image)</l>
+<c></c>
+<c>* ảnh 1 Kênh </c>
+<l>threshold(Image, Region_result, 128, 255)</l>
+<c>* ấn open grau histogram</c>
+<l>* threshold (Image, Regions, 100, 160)</l>
+<c></c>
+<c>* tăng sáng lên 2 lần</c>
+<l>scale_image(Image, ImageScaled, 2, 0)</l>
+<c></c>
+<c>* binary_threshold: tự động tính tóan ngưỡng đen trắng</c>
+<l>binary_threshold (ImageScaled, Region, 'max_separability', 'light', UsedThreshold)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c></c>
+<c>* dyn_threshold</c>
+<c>* muốn dùng dyn_threshold đầu tiên phải có bộ lọc nhiễu </c>
+<l>mean_image(Image, ImageMean, 25, 25)</l>
+<l>dyn_threshold(Image, ImageMean, Region_result,3, 'light')</l>
+<l>dev_clear_window()</l>
+<c>* cách 2</c>
+<l>* dyn_threshold(Image, ImageMean, Region_result,3, 'not_equal')</l>
+<c>* offset từ 3 - 40</c>
+<l>* light vết xước sáng hơn nền</l>
+<l>* dảk vết xước tối hơn nền</l>
+<l>* not_equal </l>
+<c></c>
+<c>* dùng ảnh màu</c>
+<l>read_image (Image1, 'C:/Users/LapTop/OneDrive/Hình ảnh/Saved Pictures/csb.jpg')</l>
+<l>get_image_size(Image1, With, Height)</l>
+<c></c>
+<l>dev_open_window(0,0, With/4, Height/4, 'black', Win1)</l>
+<l>dev_display(Image1)</l>
+<c>* tách ảnh màu thành 3 ảnh </c>
+<l>decompose3(Image1, R, G, B)</l>
+<c></c>
+<l>r_thresh := 120 + [-30, 30]</l>
+<l>g_thresh := 80 + [-30, 30]</l>
+<l>b_thresh := 90 + [-30, 30]</l>
+<c></c>
+<l>threshold(R, r_Region,r_thresh[0], r_thresh[1])</l>
+<l>threshold(B, b_Region,r_thresh[0], b_thresh[1])</l>
+<l>threshold(G, g_Region,r_thresh[0], g_thresh[1])</l>
+<c></c>
+<l>intersection(r_Region, b_Region, Region_temp)</l>
+<l>intersection(Region_temp, g_Region, Region_return)</l>
+<l>dev_close_window()</l>
+<c></c>
+<l>dev_display(Image1)</l>
+<l>dev_display(Region_return)</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

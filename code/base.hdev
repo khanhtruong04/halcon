@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.05.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* an f la quay lai, f6 la chay tung dong</c>
+<l>t1 := [1,2,4,'abc']</l>
+<c></c>
+<c>* them phan tu vao cuoi tuple</c>
+<l>tuple_concat(t1, 3, t1)</l>
+<c></c>
+<c>* them vao vi tri bat ki</c>
+<l>tuple_insert(t1, 2, 'hi', t1)</l>
+<c></c>
+<c>* xoa phan tu o vi tri bat ky tuple</c>
+<l>tuple_remove(t1, 3, t1)</l>
+<c></c>
+<c>* thay the phan tu</c>
+<l>t1[3] := 3</l>
+<c></c>
+<c>* do dai cua tuple </c>
+<l>length := |t1|</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c>* bieu thuc logic</c>
+<c>* false = 0, true = 1</c>
+<l>a := (1 == 2)</l>
+<l>b := (1 != 2)</l>
+<l>c := (5 &gt; 2) or (5 == 2)</l>
+<l>d := (5 &gt; 2) and (5 == 2)</l>
+<c></c>
+<c></c>
+<c></c>
+<c>* hien thi chu tren cua so</c>
+<l>dev_disp_text('Xin chao', 'window', 'top', 'left', 'black', [], [])</l>
+<c>* xoa cac phan tu tren cua so</c>
+<l>dev_clear_window()</l>
+<c></c>
+<c></c>
+<c></c>
+<c>* if - elseif - else -  endif </c>
+<l>if (5 == 2 )</l>
+<l>    dev_disp_text(' 5 bang 2', 'window', 'top', 'left', 'black', [], [])</l>
+<l>elseif (5==3)</l>
+<l>    dev_disp_text(' 5 bang 3', 'window', 'top', 'left', 'black', [], [])</l>
+<l>else </l>
+<l>    dev_disp_text(' 5 khong bang 2 va 3', 'window', 'top', 'left', 'black', [], [])</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<c></c>
+<c>* switch-case </c>
+<l>dev_clear_window()</l>
+<l>choice := 2</l>
+<c></c>
+<l>if (choice == 1)</l>
+<l>    dev_disp_text('Case 1', 'window', 'top', 'left', 'black', [], [])</l>
+<l>elseif (choice == 2)</l>
+<l>    dev_disp_text('Case 2', 'window', 'top', 'left', 'black', [], [])</l>
+<l>elseif (choice == 3)</l>
+<l>    dev_disp_text('Case 3', 'window', 'top', 'left', 'black', [], [])</l>
+<l>else</l>
+<l>    dev_disp_text('Default case', 'window', 'top', 'left', 'black', [], [])</l>
+<l>endif</l>
+<c></c>
+<c></c>
+<l>dev_clear_window()</l>
+<c>* vong lap</c>
+<l>for i := 0 to |t1| - 1 by 1</l>
+<l>    tuple_select(t1, i, value)</l>
+<l>    dev_disp_text(value, 'window', 12, 12, 'black', [], [])</l>
+<l>endfor</l>
+<c></c>
+<l>dev_clear_window()</l>
+<l>index := 0</l>
+<l>while( index &lt; |t1| -1)</l>
+<l>    value := t1[index]</l>
+<l>    dev_disp_text(value, 'window', 12, 12, 'black', [], [])</l>
+<l>    index := index +1</l>
+<l>endwhile</l>
+<c></c>
+<c></c>
+<c></c>
+<c>* ngoai le</c>
+<l>a1 := 10</l>
+<l>b1 := 0</l>
+<l>if (b1 != 0)</l>
+<l>    result := a1 / b1</l>
+<l>    dev_disp_text('Ket qua: ' + result, 'window', 'top', 'left', 'black', [], [])</l>
+<l>else</l>
+<l>    dev_disp_text('3ket qua', 'window', 'top', 'left', 'black', [], [])</l>
+<l>endif</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

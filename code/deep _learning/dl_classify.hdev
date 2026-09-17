@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* đọc file train DL</c>
+<l>read_dl_model('C:/Halcon_CV/code_dl_tool/classify/fruit_test.hdl', DLModelHandle)</l>
+<c></c>
+<c>* đọc file tiền xử lí</c>
+<l>read_dict('C:/Halcon_CV/code_dl_tool/classify/fruit_test_dl_preprocess_params.hdict', [], [], DL_preproces)</l>
+<c></c>
+<c>* cài đặt các tham số model</c>
+<c>* cài đặt CPU và GPU</c>
+<c>* tìm thiết bị</c>
+<l>query_available_dl_devices(['runtime','runtime'], ['gpu', 'cpu'], DL_DeviceHandles)</l>
+<c></c>
+<c>* nếu có GPU thì câu lệnh dưới là lấy GPU, lấy CPU thì để là [1]</c>
+<c>* nếu không có GPU thì giá trị dưới là CPU</c>
+<l>Device := DL_DeviceHandles[0]</l>
+<c></c>
+<c>* gán thiết bị cho model (FIX LỖI)</c>
+<l>set_dl_model_param(DLModelHandle, 'device', Device)</l>
+<c></c>
+<c>* cài đặt batch_size</c>
+<l>set_dl_model_param(DLModelHandle, 'batch_size', 1)</l>
+<c></c>
+<c>* load tệp ảnh</c>
+<l>list_image_files('C:/Halcon_CV/Images/15 Classify/Images/Fruits/Apple', 'default', [], ImageFiles)</l>
+<c></c>
+<c>* đọc ảnh và chạy model</c>
+<l>for I := 0 to |ImageFiles| - 1 by 1</l>
+<l>    read_image(Image, ImageFiles[I])</l>
+<c>    </c>
+<c>    * đưa ảnh vào batch ảnh</c>
+<l>    gen_dl_samples_from_images(Image, DLSampleBatch)</l>
+<c>    </c>
+<c>    * tiền xử lý ảnh</c>
+<c>    * thay đổi kích thước ảnh</c>
+<l>    preprocess_dl_samples(DLSampleBatch, DL_preproces)</l>
+<c>    </c>
+<c>    * chạy model</c>
+<l>    apply_dl_model(DLModelHandle, DLSampleBatch, [], DLResultBatch)</l>
+<c>    </c>
+<l>    conf := DLResultBatch.classification_confidences[0]</l>
+<l>    name := DLResultBatch.classification_class_names[0]</l>
+<c>    </c>
+<l>    test := ['Class: ' + name, 'Confidence: ' + conf]</l>
+<l>    dev_display(Image)</l>
+<l>    dev_disp_text(test, 'window', 'top', 'left', 'black', [], [])</l>
+<l>endfor</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

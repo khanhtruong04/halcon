@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'C:/Halcon_CV/Images/12. Matching/Images/ncc/clip.png')</l>
+<l>get_image_size(Image, With, Height)</l>
+<l>dev_open_window(0,0, With/2, Height/2, 'black', Win1)</l>
+<l>dev_display(Image)</l>
+<l>gen_rectangle2 (ROI_0, 124.5, 185.877, rad(40.4364), 118.879, 40.4173)</l>
+<c></c>
+<l>reduce_domain(Image,ROI_0, ImageReduced)</l>
+<c>* Cross Correlation Matching</c>
+<c>*train </c>
+<l>create_ncc_model(ImageReduced, 'auto', 0, rad(360), 'auto', 'use_polarity', ModelID)</l>
+<c></c>
+<l>find_ncc_model(Image, ModelID, 0, rad(360), 0.5, 0, 0.5, 'true', 0, Row, Column, Angle, Score)</l>
+<c>* hiện thị ra roi và tâm</c>
+<l>dev_display_ncc_matching_results(ModelID, 'red', Row, Column, Angle, 0)</l>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

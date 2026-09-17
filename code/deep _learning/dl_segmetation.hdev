@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* Đọc file train DL</c>
+<l>read_dl_model('C:/Halcon_CV/code_dl_tool/segmetation/segmetation.hdl', DLModelHandle)</l>
+<c>* Đọc file tiền xử lí</c>
+<l>read_dict('C:/Halcon_CV/code_dl_tool/segmetation/segmetation_dl_preprocess_params.hdict', [], [], DLPreprocess)</l>
+<c>* Cài đặt các tham số model - CPU và GPU</c>
+<c>* Tìm thiết bị</c>
+<l>query_available_dl_devices(['runtime','runtime'], ['gpu', 'cpu'], DLDeviceHandles)</l>
+<c>* Nếu có GPU thì lấy GPU [0], lấy CPU thì để là [1]</c>
+<c>* Nếu không có GPU thì giá trị dưới là CPU</c>
+<l>Device := DLDeviceHandles[0]</l>
+<c>* Gán thiết bị cho model</c>
+<l>set_dl_model_param(DLModelHandle, 'device', Device)</l>
+<l>set_dl_model_param(DLModelHandle, 'batch_size', 1)</l>
+<c>* Load tệp ảnh</c>
+<l>list_image_files('C:/Halcon_CV/Images/17 Semantic Segmentation/Images/ginseng/crack', 'default', [], ImageFiles)</l>
+<c>* Lấy kích thước ảnh training</c>
+<l>get_dl_model_param(DLModelHandle, 'image_width', WidthTrain)</l>
+<l>get_dl_model_param(DLModelHandle, 'image_height', HeightTrain)</l>
+<l>get_dl_model_param(DLModelHandle, 'class_names', ClassNames)</l>
+<c></c>
+<c>* Xử lý từng ảnh</c>
+<l>for I := 0 to |ImageFiles| - 1 by 1</l>
+<l>    read_image(Image, ImageFiles[I])</l>
+<c>    </c>
+<c>    * Lấy kích thước ảnh gốc</c>
+<l>    get_image_size(Image, Width, Height)</l>
+<c>    </c>
+<c>    * Tạo batch ảnh</c>
+<l>    gen_dl_samples_from_images(Image, DLSampleBatch)</l>
+<c>    </c>
+<c>    * Tiền xử lí ảnh</c>
+<l>    preprocess_dl_samples(DLSampleBatch, DLPreprocess)</l>
+<c>    </c>
+<c>    * Chạy model</c>
+<l>    apply_dl_model(DLModelHandle, DLSampleBatch, [], DLResultBatch)</l>
+<c>    </c>
+<c>    * Lấy ảnh segmentation từ kết quả</c>
+<l>    get_dict_object(ImageResult, DLResultBatch, 'segmentation_image')</l>
+<c>    </c>
+<c>    * Lấy kích thước ảnh segmentation (thường là 256x256)</c>
+<l>    get_image_size(ImageResult, WidthSeg, HeightSeg)</l>
+<c>    </c>
+<c>    * Tính toán tỷ lệ scale từ ảnh segmentation về ảnh gốc</c>
+<l>    ScaleX := real(Width) / real(WidthSeg)</l>
+<l>    ScaleY := real(Height) / real(HeightSeg)</l>
+<c>    </c>
+<c>    * Tạo ma trận biến đổi</c>
+<l>    hom_mat2d_identity(HomMat2DIdentity)</l>
+<l>    hom_mat2d_scale(HomMat2DIdentity, ScaleX, ScaleY, 0, 0, HomMat2DScale)</l>
+<c>    </c>
+<c>    * Scale ảnh segmentation về kích thước ảnh gốc</c>
+<l>    affine_trans_image(ImageResult, ImageResultScaled, HomMat2DScale, 'constant', 'false')</l>
+<l>    zoom_image_size(ImageResult, ImageResultScaled, Width, Height, 'nearest_neighbor')</l>
+<c>    </c>
+<c>    * Tạo region cho từng class</c>
+<l>    gen_empty_obj(RegionResult)</l>
+<l>    for J := 1 to |ClassNames| - 1 by 1</l>
+<c>        * Threshold để lấy region của class J từ ảnh đã scale</c>
+<l>        threshold(ImageResultScaled, Region, J, J)</l>
+<l>        concat_obj(RegionResult, Region, RegionResult)</l>
+<l>    endfor</l>
+<c>    </c>
+<c>    * Hiển thị kết quả</c>
+<l>    dev_set_colored(3)</l>
+<l>    dev_display(Image)</l>
+<l>    dev_display(RegionResult)</l>
+<l>    stop()</l>
+<l>endfor</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

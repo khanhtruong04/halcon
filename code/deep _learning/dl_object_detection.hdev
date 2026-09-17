@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* đọc file train DL</c>
+<l>read_dl_model('C:/Halcon_CV/code_dl_tool/object_detection/object_detection.hdl', DLModelHandle)</l>
+<c></c>
+<c>* đọc file tiền xử lí</c>
+<l>read_dict('C:/Halcon_CV/code_dl_tool/object_detection/object_detection_dl_preprocess_params.hdict', [], [], DL_preproces)</l>
+<c></c>
+<c>* cài đặt các tham số model</c>
+<c>* cài đặt CPU và GPU</c>
+<c>* tìm thiết bị</c>
+<l>query_available_dl_devices(['runtime','runtime'], ['gpu', 'cpu'], DL_DeviceHandles)</l>
+<c></c>
+<c>* nếu có GPU thì câu lệnh dưới là lấy GPU, lấy CPU thì để là [1]</c>
+<c>* nếu không có GPU thì giá trị dưới là CPU</c>
+<l>Device := DL_DeviceHandles[0]</l>
+<c></c>
+<c>* gán thiết bị cho model</c>
+<l>set_dl_model_param(DLModelHandle, 'device', Device)</l>
+<c></c>
+<c>* cài đặt tham số cho model</c>
+<l>set_dl_model_param(DLModelHandle, 'batch_size', 1)</l>
+<l>set_dl_model_param(DLModelHandle, 'min_confidence', 0)</l>
+<l>set_dl_model_param(DLModelHandle, 'max_overlap', 0.1)</l>
+<l>set_dl_model_param(DLModelHandle, 'max_overlap_class_agnostic', 0.27)</l>
+<c></c>
+<c>* lấy kich thước ảnh </c>
+<l>get_dl_model_param(DLModelHandle, 'image_width', Width_train)</l>
+<l>get_dl_model_param(DLModelHandle,'image_height', Height_train)</l>
+<c></c>
+<c>* load tệp ảnh</c>
+<l>list_image_files('C:/Halcon_CV/Images/16 Object Detection/Images/Fruits', 'default', [], ImageFiles)</l>
+<c></c>
+<l>for I := 0 to |ImageFiles| - 1 by 1</l>
+<l>    read_image(Image, ImageFiles[I])</l>
+<l>    get_image_size(Image, Width, Height)</l>
+<c></c>
+<l>    gen_dl_samples_from_images(Image, DLSampleBatch)</l>
+<l>    preprocess_dl_samples(DLSampleBatch, DL_preproces)</l>
+<c></c>
+<l>    apply_dl_model(DLModelHandle, DLSampleBatch, [], DLResultBatch)</l>
+<c></c>
+<l>    r1 := DLResultBatch.bbox_row1 * Height / Height_train</l>
+<l>    c1 := DLResultBatch.bbox_col1 * Width / Width_train</l>
+<l>    r2 := DLResultBatch.bbox_row2 * Height / Height_train</l>
+<l>    c2 := DLResultBatch.bbox_col2 * Width / Width_train</l>
+<c></c>
+<l>    dev_set_draw('margin')</l>
+<l>    text := DLResultBatch.bbox_class_name + ': ' + DLResultBatch.bbox_confidence</l>
+<c></c>
+<l>    gen_rectangle1(Rectangle, r1, c1, r2, c2)</l>
+<l>    dev_display(Image)</l>
+<l>    dev_display(Rectangle)</l>
+<l>    dev_disp_text(text, 'image', r1, c1, 'black', [], [])</l>
+<c></c>
+<l>    stop()</l>
+<l>endfor</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

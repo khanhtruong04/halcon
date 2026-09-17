@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'C:/Halcon_CV/Images/12. Matching/Images/ncc/clip.png')</l>
+<l>get_image_size(Image, With, Height)</l>
+<l>dev_open_window(0,0, With/2, Height/2, 'black', Win1)</l>
+<l>dev_display(Image)</l>
+<l>gen_rectangle2 (ROI_0, 124.5, 185.877, rad(40.4364), 118.879, 40.4173)</l>
+<c></c>
+<c>* TẠO ROI VÀ TRÍCH XUẤT VÙNG HỌC MẪU</c>
+<c>* Cắt ảnh theo ROI, chỉ giữ lại vùng cần học mẫu</c>
+<l>reduce_domain(Image, ROI_0, ImageReduced)</l>
+<c></c>
+<c></c>
+<c>* HỌC MÔ HÌNH SHAPE-BASED MATCHING</c>
+<c>* (Tuỳ chọn) Giảm kích thước ảnh để tăng tốc độ xử lý</c>
+<l>* zoom_image_factor(ImageReduced, ImageZoomed, 1.0/8, 1.0/8, 'constant')</l>
+<c>* </c>
+<l>create_shape_model (ImageReduced, 'auto', rad(0), rad(360), 'auto', 'auto', 'use_polarity', 'auto', 'auto', ModelID)</l>
+<c>* ImageReduced  : Ảnh dùng để học mô hình</c>
+<c>* 'auto'        : HALCON tự động chọn số tầng pyramid</c>
+<c>* rad(0–360)    : Học mẫu với mọi góc xoay</c>
+<c>* 'use_polarity': Sử dụng cực tính biên (sáng–tối)</c>
+<c>* ModelID       : ID của mô hình sau khi học</c>
+<c></c>
+<c>* Trích xuất đường biên (contour) của mô hình shape</c>
+<l>get_shape_model_contours (ModelContours, ModelID, 1)</l>
+<c></c>
+<c></c>
+<c>* LƯU VÀ ĐỌC LẠI MÔ HÌNH</c>
+<c>* Lưu mô hình shape đã học ra file</c>
+<l>*write_shape_model (ModelID, 'C:/Halcon_CV/save_model/template_matching.shm')</l>
+<c></c>
+<c>* Đọc lại mô hình shape từ file đã lưu</c>
+<l>read_shape_model ('C:/Halcon_CV/save_model/template_matching.shm', ModelID1)</l>
+<c></c>
+<c>* TÌM KIẾM / NHẬN DẠNG MẪU</c>
+<l>find_shape_model (Image, ModelID1, 0, rad(360), 0.8, 0, 0.5, 'least_squares', 0, 0.9, Row, Column, Angle, Score)</l>
+<c>* Image          : Ảnh cần tìm mẫu</c>
+<c>* ModelID1       : Mô hình shape đã học</c>
+<c>* 0–360 độ       : Phạm vi xoay khi tìm</c>
+<c>* 0.8            : Ngưỡng score tối thiểu</c>
+<c>* least_squares  : Tinh chỉnh kết quả với độ chính xác cao</c>
+<c>* Row, Column    : Vị trí tìm được</c>
+<c>* Angle          : Góc xoay của đối tượng</c>
+<c>* Score          : Độ khớp của mẫu</c>
+<c></c>
+<c>* Hiển thị kết quả matching lên ảnh (hiện thi dưới dạng contour )</c>
+<l>dev_display_shape_matching_results (ModelID1, 'blue', Row, Column, Angle, 1, 1, 0)</l>
+<c>* Đếm số lượng sản phẩm</c>
+<l>count := |Row|</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>* SHAPE-BASED MATCHING</c>
+<l>read_image (Board01, 'C:/Halcon_CV/Images/12. Matching/Homework/1/board-01.png')</l>
+<l>get_image_size(Board01, Width, Height)</l>
+<l>dev_open_window(0,0, Width/2, Height/2, 'black', Win1)</l>
+<l>dev_display(Board01)</l>
+<c>* ROI dùng để tạo model</c>
+<l>gen_rectangle1 (ROI_0_Search, 114.5, 140.065, 176.5, 464.261)</l>
+<l>gen_rectangle1 (ROI_0, 194.377, 228.489, 236.895, 364.762)</l>
+<l>reduce_domain(Board01, ROI_0, ImageReduced1)</l>
+<c>* Lưu tọa độ master (tâm ROI)</c>
+<l>area_center(ROI_0, Area, RowMaster, ColumnMaster)</l>
+<l>AngleMaster := 0</l>
+<l>create_shape_model(ImageReduced1, 'auto', rad(0), rad(360), \
+                   'auto', 'auto', 'use_polarity', 'auto', 'auto', ModelID)</l>
+<l>get_shape_model_contours(ModelContours1, ModelID, 1)</l>
+<c></c>
+<l>read_image (Board04, 'C:/Halcon_CV/Images/12. Matching/Homework/1/board-04.png')</l>
+<l>dev_display(Board04)</l>
+<c></c>
+<l>find_shape_model (Board04, ModelID, 0, rad(360), \
+                  0.8, 1, 0.5, 'least_squares', 0, 0.9, \
+                  Row, Column, Angle, Score)</l>
+<l>dev_display_shape_matching_results (ModelID, 'red', Row, Column, Angle, 1, 1, 0)</l>
+<c></c>
+<c>* ROI search trong ảnh master</c>
+<l>* gen_rectangle1 (ROI_0_Search, 114.5, 140.065, 176.5, 464.261)</l>
+<l>vector_angle_to_rigid(RowMaster, ColumnMaster, AngleMaster, \
+                      Row, Column, Angle, HomMat2D)</l>
+<l>affine_trans_region(ROI_0_Search, RegionAffineTrans, HomMat2D, 'nearest_neighbor')</l>
+<l>dev_set_color('green')</l>
+<l>dev_display(RegionAffineTrans)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c></c>
+<c>* GENERIC SHAPE-BASED MATCHING</c>
+<l>read_image (GreenDot, 'C:/Halcon_CV/Images/12. Matching/Images/scale/green-dot.png')</l>
+<l>get_image_size(GreenDot, Width, Height)</l>
+<l>dev_open_window(0,0, Width/2, Height/2, 'black', Win1)</l>
+<l>dev_display(GreenDot)</l>
+<l>gen_circle (ROI_0, 276.5, 281.768, 92.1697)</l>
+<l>reduce_domain(GreenDot, ROI_0, ImageReduced2)</l>
+<c>* Tao model mặc </c>
+<l>create_generic_shape_model(ModelID2)</l>
+<c>* Cai dat tham so cho </c>
+<l>set_generic_shape_model_param (ModelID2, 'num_levels', 4)</l>
+<l>set_generic_shape_model_param (ModelID2, 'iso_scale_min', 0.8)</l>
+<l>set_generic_shape_model_param (ModelID2, 'iso_scale_max', 1.0)</l>
+<l>set_generic_shape_model_param (ModelID2, 'min_score', 0.5)</l>
+<l>set_generic_shape_model_param (ModelID2, 'num_matches', 0)</l>
+<l>set_generic_shape_model_param (ModelID2, 'metric', 'ignore_global_polarity')</l>
+<c>* train</c>
+<l>train_generic_shape_model(ImageReduced2, ModelID2)</l>
+<l>read_image (GreenDots, 'C:/Halcon_CV/Images/12. Matching/Images/scale/green-dots.png')</l>
+<c></c>
+<l>find_generic_shape_model (GreenDots, ModelID2, MatchResultID, NumMatches)</l>
+<c>* ouput hiện thi dưới dạng contour</c>
+<l>get_generic_shape_model_result_object(Objects, MatchResultID, 'all', 'contours')</l>
+<l>get_generic_shape_model_result (MatchResultID, 'all', 'row', Row)</l>
+<l>get_generic_shape_model_result (MatchResultID, 'all', 'column', Column)</l>
+<l>get_generic_shape_model_result (MatchResultID, 'all', 'angle', Angle)</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

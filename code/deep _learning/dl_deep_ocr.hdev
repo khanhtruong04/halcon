@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* tao model mac dinh</c>
+<l>create_deep_ocr([], [], DeepOcrHandle)</l>
+<c></c>
+<l>query_available_dl_devices(['runtime', 'runtime'], ['gpu', 'cpu'], DLDeviceHandles)</l>
+<l>Device := DLDeviceHandles[0]</l>
+<c></c>
+<c>* cai dat mo hinh ocr</c>
+<l>set_deep_ocr_param (DeepOcrHandle, 'detection_model', 'C:/Halcon_CV/code_dl_tool/Deep_OCR/model_detection_opt.hdl')</l>
+<l>set_deep_ocr_param (DeepOcrHandle, 'recognition_model', 'C:/Halcon_CV/code_dl_tool/Deep_OCR/model_recognition_opt.hdl')</l>
+<l>set_deep_ocr_param (DeepOcrHandle, 'device', Device)</l>
+<c></c>
+<c>* doc anh</c>
+<l>list_image_files ('C:/Halcon_CV/Images/19 Deep OCR/Images/punched_numbers', 'default', [], Imagefiles)</l>
+<c></c>
+<l>scale := 0.75</l>
+<l>dev_open_window (0, 0, 673 * scale, 481 * scale, 'black', Window1)</l>
+<l>dev_open_window (0, 675 * scale, 673 * 2 * scale, 481 * scale, 'black', Window2)</l>
+<c></c>
+<l>for Index := 0 to |Imagefiles| -1 by 1</l>
+<l>    read_image(Image, Imagefiles[Index])</l>
+<c>    * khong can them buoc tien su ly so voi 4 bai toan kia</c>
+<l>    apply_deep_ocr(Image, DeepOcrHandle, ['auto'], DeepOcrResult)</l>
+<l>    dev_display_deep_ocr_results(Image, Window1, DeepOcrResult, [], [])</l>
+<l>    dev_display_deep_ocr_score_maps(Window2, DeepOcrResult, [], [])</l>
+<l>endfor</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

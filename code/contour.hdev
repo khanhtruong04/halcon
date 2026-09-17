@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image (Image, 'C:/Users/Public/Documents/MVTec/HALCON-25.11-Progress-Student-Edition/examples/images/printer_chip/printer_chip_02.png')</l>
+<l>get_image_size(Image, With, Height)</l>
+<c></c>
+<l>dev_open_window(0,0, With/4, Height/4, 'black', Win1)</l>
+<l>dev_display(Image)</l>
+<c>* ấn chuột trái để tạo các đỉnh, ấn ctrl + chuột trái để xóa đỉnh</c>
+<c>* muốn zoom to, nhỏ, dinh chuyển , xoay ấn shift + chuột trái ấn hủy thì shift + chuột trái </c>
+<c>* xác nhận contour() nhấn chuột phải  </c>
+<l>draw_xld(ContOut, Win1, 'true', 'true', 'true', 'true')</l>
+<c>* lấy ra các đỉnh của contour</c>
+<c>* Row =[r1, r2, ...]</c>
+<c>* Col =[c1, r2, ...]</c>
+<c>* =&gt; tọa độ đình (r1, c1)</c>
+<l>get_contour_xld(ContOut, Row, Col)</l>
+<c>* tọa 1 contour bằng cách truyền tọa độ đỉnh (giống hình vừa vẽ ở trên)</c>
+<l>gen_contour_polygon_xld(Contour, Row, Col)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>* tọa contour dấu cộng, biểu diễn tâm</c>
+<l>dev_display(Image)</l>
+<l>gen_cross_contour_xld(Cross, 153, 607, 20, rad(45))</l>
+<c>* tạo 1 đường thẳng có mũi tên, tọa độ điểm (0,0) và (153, 657), 10 chiều dài mũi tên, 12 chiều cao mũi tên</c>
+<l>gen_arrow_contour_xld(Arrow, 0, 0, 153, 607, 10, 1)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<c>* trích xuất contour (cạnh)</c>
+<c>* trích xuất cạnh ảnh (ảnh đầu vào, đầu ra, bộ lọc, ampha, ngưỡng min, ngưỡng max)</c>
+<l>dev_display(Image)</l>
+<l>edges_sub_pix(Image, Edges, 'canny', 1, 20, 40)</l>
+<c>* lấy ra kích thước bộ lọc =&gt; size = 7 dùng bộ lọc 7x7</c>
+<l>info_edges('canny', 'edge', 1, Size, Coeffs)</l>
+<l>dev_clear_window()</l>
+<c></c>
+<l>* dev_display(Image)</l>
+<l>* draw_xld(ContOut1, Win1, 'true', 'true', 'true', 'true')</l>
+<l>* fit_line_contour_xld(ContOut, 'tukey', -1,0, 5, 2, RowBegin, ColBegin, RowEnd, ColEnd, Nr, Nc, Dist)</l>
+<l>* gen_region_line(Line,RowBegin, ColBegin, RowEnd, ColEnd)</l>
+<c></c>
+<c></c>
+<l>dev_clear_window()</l>
+<l>read_image (Csb, 'C:/Users/LapTop/OneDrive/Hình ảnh/Saved Pictures/csb.jpg')</l>
+<l>get_image_size(Csb, With, Height)</l>
+<l>dev_open_window(0,0, With/4, Height/4, 'black', Win1)</l>
+<l>dev_display(Csb)</l>
+<l>edges_color_sub_pix(Csb, Patras, 'canny', 1, 20, 40)</l>
+<l>info_edges('canny', 'edge', 1, Size, Coeffs)</l>
+<l>dev_clear_window()</l>
+<c>* các hàm convert từ contour-region và ngược lại </c>
+<c>* convert từ region sang contour</c>
+<l>dev_display(Image)</l>
+<l>gen_rectangle1 (ROI_0, 424.293, 270.75, 801.153, 650.75)</l>
+<l>gen_rectangle2 (TMP_Region, 275.533, 585.75, rad(-39.8668), 123.773, 62.7651)</l>
+<l>union2 (ROI_0, TMP_Region, ROI_01)</l>
+<l>dev_clear_window()</l>
+<l>dev_display(Image)</l>
+<l>gen_contour_region_xld(ROI_01, Contours, 'border')</l>
+<l>dev_display(Contours)</l>
+<c></c>
+<c>* convert từ contour sang region</c>
+<l>gen_region_contour_xld(Contours, Region1, 'filled')</l>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

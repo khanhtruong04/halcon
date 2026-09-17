@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<l>read_image(Image, 'C:/Users/LapTop/OneDrive/Hình ảnh/Saved Pictures/csb.jpg')</l>
+<c></c>
+<l>get_image_size(Image, Width, Height)</l>
+<c></c>
+<l>dev_open_window(0,0,Width/4,Height/4,'black',Win1)</l>
+<l>dev_open_window(0,0,Width/4,Height/4,'black',Win2)</l>
+<c></c>
+<l>dev_set_window(Win1)</l>
+<l>dev_display(Image)</l>
+<c></c>
+<c></c>
+<l>dev_set_window(Win2)</l>
+<c>* bộ lọc trung bình</c>
+<l>* mean_image(Image, meanImage, 7, 7)</l>
+<c>* bộ lọc trung vị</c>
+<l>* median_image(Image, medianImage, 'square', 1,'mirrored')</l>
+<c>* bộ lọc gauss</c>
+<l>* gauss_filter(Image, gaussImage, 3)</l>
+<c>* bộ lọc tăng cường cạnh</c>
+<l>* emphasize(Image, emphasizeImage, 3, 3, 5)</l>
+<c>* bộ lọc đảo ngược ảnh</c>
+<l>* invert_image(Image, invertImage)</l>
+<c></c>
+<c></c>
+<c>* Xử lí hình thái học</c>
+<c>* co ảnh</c>
+<l>* gray_erosion_rect(Image, imageErosion, 17, 17)</l>
+<c></c>
+<c>* dãn </c>
+<l>* gray_dilation_rect(Image, imageDilation, 17, 17)</l>
+<c></c>
+<c>* phép mở ảnh = co ảnh + dãn, chú ý co dãn trong mờ ảnh phải cùng kích thước</c>
+<l>* gray_erosion_rect(Image, imageErosion, 17, 17)</l>
+<l>* gray_dilation_rect(imageErosion, imageDilation, 17, 17)</l>
+<c>* phép mở ảnh</c>
+<l>gray_opening_rect(Image,openImage, 17, 17)</l>
+<c></c>
+<c>* phép đóng ảnh </c>
+<l>gray_closing_rect(Image, closingImage, 17,17)</l>
+<c></c>
+<c>* Tăng độ tương phản có 2 cách (tỷ lệ )</c>
+<l>scale_image(Image, imageScale, 2, 0)</l>
+<l>* pow_image(Image, imagePow, 2)</l>
+<c></c>
+<c>* Toán tử với ảnh</c>
+<c>* cộng</c>
+<l>add_image(Image, imageScale, imageAdd, 2, 0)</l>
+<c>* trừ</c>
+<l>sub_image(Image, imageScale, imageSub, 2, 0)</l>
+<c>* trị tuyệt đối</c>
+<l>abs_diff_image(Image, imageScale, imageAbsDiff, 2)</l>
+<c></c>
+<c>* Thay đổi kích thước ảnh</c>
+<l>zoom_image_size(Image, imageZoomSize, 100, 100, 'constant')</l>
+<c></c>
+<l>zoom_image_factor(Image, imageZoomFactor, 0.5, 0.5, 'constant')</l>
+<c></c>
+<c>* Phép xoay ảnh</c>
+<l>rotate_image(Image, imageRotate, 10, 'constant')</l>
+<c></c>
+<c>* Cài đặt giá trị cho px cho ảnh(ảnh 1 kênh)</c>
+<l>rgb1_to_gray(Image, GrayImage)</l>
+<l>set_grayval(Image, 100, 108, 0)</l>
+<l>get_grayval(Image, 100, 108, Value)</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

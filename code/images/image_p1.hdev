@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* Hiển thị ảnh </c>
+<l>read_image (returnImage, 'C:/Halcon_CV/Images/5.Image/Images/olympic_stadium.png')</l>
+<l>read_image (returnImage1, 'C:/Users/LapTop/OneDrive/Hình ảnh/Saved Pictures/kq.jpg')</l>
+<l>get_image_size(returnImage, With, Height)</l>
+<c></c>
+<c>* Tạo 1 cửa sổ hiển thị ảnh mới</c>
+<l>dev_open_window(0, 0, With/4, Height/4, 'green', WindowHandle)</l>
+<l>dev_open_window(0, 0, With/4, Height/4, 'green', WindowHandle1)</l>
+<c>* (0, 0): vị trí góc trên bên trái của cửa sổ trên màn hình</c>
+<c>* 512, 512: chiều rộng và chiều cao của cửa sổ (pixel)</c>
+<c>* 'green': màu nền của cửa sổ</c>
+<c>* WindowHandle: biến lưu ID (handle) của cửa sổ vừa tạo</c>
+<c></c>
+<l>set_window_param (WindowHandle, 'plot_quality', 'best')</l>
+<c>* Thiết lập chất lượng vẽ cho cửa sổ hiển thị</c>
+<c>* 'plot_quality': tham số điều khiển chất lượng hiển thị</c>
+<c>* 'best': hiển thị với chất lượng cao nhất, đường vẽ mượt và rõ nét</c>
+<c></c>
+<l>get_window_param (WindowHandle, 'plot_quality', Plot)</l>
+<c>* Lấy giá trị hiện tại của tham số plot_quality</c>
+<c>* Plot: biến dùng để lưu giá trị trả về (ví dụ: 'best' hoặc 'fast')</c>
+<c></c>
+<c>* Hiển thị 1 iconic leen cửa sổ graphic trên cửa sổ WindowHandle</c>
+<l>dev_set_window(WindowHandle)</l>
+<l>dev_display(returnImage)</l>
+<c></c>
+<c>* Hiển thị 1 iconic leen cửa sổ graphic trên cửa sổ WindowHandle1</c>
+<l>dev_set_window(WindowHandle1)</l>
+<l>dev_display(returnImage1)</l>
+<l>* dev_clear_window()</l>
+<c></c>
+<c>* Tách ảnh màu </c>
+<l>decompose3(returnImage1, R, G, B)</l>
+<l>dev_display(B)</l>
+<c></c>
+<c>* Tổng hợp lại thành ảnh màu</c>
+<l>compose3(R, G, B, ColorImage)</l>
+<c></c>
+<c></c>
+<c>* Đổi hệ màu</c>
+<l>trans_from_rgb(R, G, B, H, S, I, 'hsi')</l>
+<c></c>
+<c>* Tạo 1 bức ảnh có sẵn</c>
+<l>gen_image_proto (returnImage, genImage, 200)</l>
+<c></c>
+<c>* Tạo 1 ảnh không có sẵn</c>
+<l>gen_image_const (Image3, 'byte', With, Height)</l>
+<c></c>
+<l>gen_image_proto(returnImage, R_Copy, 31)</l>
+<l>gen_image_proto(returnImage, G_Copy, 124)</l>
+<l>gen_image_proto(returnImage, B_Copy, 58)</l>
+<l>compose3(R_Copy, G_Copy, B_Copy, MultiChannelImage)</l>
+<c></c>
+<l>compose3(R_Copy, G_Copy, B_Copy, MultiChannelImage)</l>
+<c></c>
+<c></c>
+<c>* Lưu ảnh</c>
+<l>write_image(MultiChannelImage, 'jpg', 0, 'C:/Users/LapTop/OneDrive/Hình ảnh/Saved Pictures/save_image_hlcon')</l>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+<c></c>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>

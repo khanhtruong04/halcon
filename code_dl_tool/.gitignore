@@ -1,0 +1,8 @@
+Deep_OCR/model_recognition_opt.hdl
+Deep_OCR/Training-detection/best_model.hdl
+Deep_OCR/Training-detection/model.hdl
+Deep_OCR/Training-recognition/best_model.hdl
+Deep_OCR/Training-recognition/model.hdl
+object_detection/dl_object_detection/best_model.hdl
+object_detection/dl_object_detection/model.hdl
+object_detection/object_detection.hdl

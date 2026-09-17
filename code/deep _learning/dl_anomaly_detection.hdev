@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<procedure name="main">
+<interface/>
+<body>
+<c>* tim thiet bi</c>
+<l>query_available_dl_devices(['runtime', 'runtime'], ['gpu', 'cpu'], DLDeviceHandles)</l>
+<l>DLDevice := DLDeviceHandles[0]</l>
+<c></c>
+<c>* doc model anomaly_detection.hdl</c>
+<l>read_dl_model ('C:/Halcon_CV/code_dl_tool/anomaly_detection/anomaly_detection.hdl', DLModel)</l>
+<l>create_dl_preprocess_param_from_model (DLModel, 'none', 'full_domain', [], [], [], DLPreprocessParam)</l>
+<c></c>
+<c>* doc file tien xu lyanomaly_detection_dl_preprocess_params.hdict</c>
+<l>read_dict('C:/Halcon_CV/code_dl_tool/anomaly_detection/anomaly_detection_dl_preprocess_params.hdict', [], [], DLPreprocess)</l>
+<c></c>
+<c>* cai dat model </c>
+<l>set_dl_model_param(DLModel, 'batch_size', 1 )</l>
+<l>set_dl_model_param(DLModel, 'device', DLDevice)</l>
+<c></c>
+<c>* lay gia tri anomaly_(nguong xac dinh ok loi ) va segmentation_threshold(nguong phan doan ok loi)</c>
+<c>   * meta data o trong model</c>
+<l>get_dl_model_param(DLModel, 'meta_data', MetaData)</l>
+<c></c>
+<l>get_dict_param(MetaData, 'keys', [], KeyList)</l>
+<l>dev_disp_text(KeyList, 'window', 'top', 'left', 'black', [], [])</l>
+<c></c>
+<l>seg_threshold := number(MetaData.anomaly_segmentation_threshold)</l>
+<l>classify_threshold := number(MetaData.anomaly_classification_threshold)</l>
+<c></c>
+<c>* load anh</c>
+<l>list_image_files ('C:/Halcon_CV/Images/18 Anomaly Detection/Images/Bottles1/OK', 'default', [], Imagefiles)</l>
+<c></c>
+<l>WindowDict := dict{}</l>
+<l>DLDatasetInfo := dict{}</l>
+<c>* chay model</c>
+<l>for I := 0 to |Imagefiles| - 1 by 1</l>
+<l>    read_image (Image, Imagefiles[I])</l>
+<c></c>
+<l>    gen_dl_samples_from_images (Image, DLSampleBatch)</l>
+<c></c>
+<l>    preprocess_dl_samples (DLSampleBatch, DLPreprocessParam)</l>
+<c></c>
+<l>    apply_dl_model (DLModel, DLSampleBatch, [], DLResultBatch)</l>
+<c></c>
+<l>    threshold_dl_anomaly_results (seg_threshold, classify_threshold, DLResultBatch)</l>
+<l>    dev_display_dl_data (DLSampleBatch, DLResultBatch, DLDatasetInfo, ['anomaly_result', 'anomaly_image'], [], WindowDict)</l>
+<l>    stop ()</l>
+<l>endfor</l>
+</body>
+<docu id="main">
+<parameters/>
+</docu>
+</procedure>
+</hdevelop>
