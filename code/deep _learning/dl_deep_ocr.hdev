@@ -1,33 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<hdevelop file_version="1.2" halcon_version="25.11.0.0">
+<hdevelop file_version="1.2" halcon_version="26.05.0.1">
 <procedure name="main">
 <interface/>
 <body>
-<c>* tao model mac dinh</c>
-<l>create_deep_ocr([], [], DeepOcrHandle)</l>
+<c>* 0. Đường dẫn ảnh - ĐỔI thành ảnh của bạn</c>
+<l>ImagePath := 'fonts/arial_a7'</l>
 <c></c>
-<l>query_available_dl_devices(['runtime', 'runtime'], ['gpu', 'cpu'], DLDeviceHandles)</l>
-<l>Device := DLDeviceHandles[0]</l>
+<c>* 1. Đọc ảnh</c>
+<l>read_image (Image, ImagePath)</l>
 <c></c>
-<c>* cai dat mo hinh ocr</c>
-<l>set_deep_ocr_param (DeepOcrHandle, 'detection_model', 'C:/Halcon_CV/code_dl_tool/Deep_OCR/model_detection_opt.hdl')</l>
-<l>set_deep_ocr_param (DeepOcrHandle, 'recognition_model', 'C:/Halcon_CV/code_dl_tool/Deep_OCR/model_recognition_opt.hdl')</l>
-<l>set_deep_ocr_param (DeepOcrHandle, 'device', Device)</l>
+<c>* 2. Mở cửa sổ ĐÚNG 1 LẦN, trước khi hiển thị</c>
+<c>*   (không gọi dev_close_window / close_window trước khi xem xong kết quả,</c>
+<c>*     nếu không WindowHandle sẽ bị giải phóng -&gt; lỗi 2454)</c>
+<l>dev_close_window ()</l>
+<l>dev_open_window_fit_image (Image, 0, 0, -1, -1, WindowHandle)</l>
 <c></c>
-<c>* doc anh</c>
-<l>list_image_files ('C:/Halcon_CV/Images/19 Deep OCR/Images/punched_numbers', 'default', [], Imagefiles)</l>
+<c>* 3. Tạo model Deep OCR (dùng model huấn luyện sẵn của HALCON)</c>
+<l>create_deep_ocr ([], [], DeepOcrHandle)</l>
 <c></c>
-<l>scale := 0.75</l>
-<l>dev_open_window (0, 0, 673 * scale, 481 * scale, 'black', Window1)</l>
-<l>dev_open_window (0, 675 * scale, 673 * 2 * scale, 481 * scale, 'black', Window2)</l>
+<c>* 4. Chạy Deep OCR: tìm vị trí từ (detection) + đọc từ (recognition)</c>
+<l>apply_deep_ocr (Image, DeepOcrHandle, 'auto', DeepOcrResult)</l>
 <c></c>
-<l>for Index := 0 to |Imagefiles| -1 by 1</l>
-<l>    read_image(Image, Imagefiles[Index])</l>
-<c>    * khong can them buoc tien su ly so voi 4 bai toan kia</c>
-<l>    apply_deep_ocr(Image, DeepOcrHandle, ['auto'], DeepOcrResult)</l>
-<l>    dev_display_deep_ocr_results(Image, Window1, DeepOcrResult, [], [])</l>
-<l>    dev_display_deep_ocr_score_maps(Window2, DeepOcrResult, [], [])</l>
-<l>endfor</l>
+<c>* 5. Hiển thị kết quả</c>
+<c> *   Lấy lại handle của cửa sổ đang mở ngay trước khi hiển thị</c>
+<c> *   để chắc chắn handle còn hợp lệ.</c>
+<c> *   Thứ tự tham số: (Image, WindowHandle, DeepOcrResult, GenParamName, GenParamValue)</c>
+<l>dev_get_window (WindowHandle)</l>
+<l>dev_display_deep_ocr_results (Image, WindowHandle, DeepOcrResult, [], [])</l>
+<c></c>
+<c>* 6. Lấy danh sách chữ đọc được (xem trong cửa sổ Variables: RecognizedWords)</c>
+<l>RecognizedWords := []</l>
+<l>get_dict_param (DeepOcrResult, 'key_exists', 'words', HasWords)</l>
+<l>if (HasWords)</l>
+<l>    get_dict_tuple (DeepOcrResult, 'words', Words)</l>
+<l>    get_dict_param (Words, 'key_exists', 'word', HasWord)</l>
+<l>    if (HasWord)</l>
+<l>        get_dict_tuple (Words, 'word', RecognizedWords)</l>
+<l>    endif</l>
+<l>endif</l>
+<c></c>
+<c>* 7. Giải phóng model khi đã dùng xong</c>
+<c>*    (cửa sổ vẫn để mở để bạn xem kết quả)</c>
+<l>clear_handle (DeepOcrHandle)</l>
 </body>
 <docu id="main">
 <parameters/>
